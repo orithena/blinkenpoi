@@ -1,5 +1,11 @@
+#ifdef ESP32
+#include <WiFi.h>
+#include <WebServer.h>
+#endif
+#ifdef ESP8266
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#endif
 
 // Install the libraries with arduino library manager in Tools/Manage libraries
 
@@ -7,8 +13,16 @@
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
                                    // NEEDS v5.x !! >6.x will fail to compile
+#ifdef ESP32
+#include <ESPmDNS.h>
+#endif
+#ifdef ESP8266
 #include <ESP8266mDNS.h>
+#endif
 #include <FS.h>
+#ifdef ESP32
+#include <SPIFFS.h>         
+#endif
 #include <Adafruit_DotStar.h>
 #include <SPI.h>         
 
@@ -73,8 +87,8 @@
 
 // These are the internal pin numbers used to drive the leds.
 // if C and D are swapped on your ledstrip just swap these two numbers
-#define DATAPIN    14
-#define CLOCKPIN   13
+#define DATAPIN    23
+#define CLOCKPIN   18
 
 
 
@@ -85,7 +99,7 @@
 // kann man so machen ist dann halt scheisse.
 
 // valid pinout for PCB rev. 3.0
-const int button2_pin=2; // D4
+const int button2_pin=16; // D4
 
 // valid pinout for PCB rev. 1.0
 //const int button1_pin=12; // D6
@@ -99,7 +113,12 @@ const int button2_pin=2; // D4
 String SW_VERSION="0.9";
 
 
+#ifdef ESP32
+WebServer server(80);       // Create a webserver object that listens for HTTP request on port 80
+#endif
+#ifdef ESP8266
 ESP8266WebServer server(80);       // Create a webserver object that listens for HTTP request on port 80
+#endif
 
 File fsUploadFile;                 // a File variable to temporarily store the received file
 
@@ -124,6 +143,7 @@ OneButton button2(button2_pin, true);
 /// global vars, no touchy
 int animation_running=0;
 int total_animations=0;
+bool online_mode=true;
 
 // set true if button is pressed during pink phase
 boolean reset_config = false;
@@ -150,12 +170,13 @@ void setup() {
 
   checkforButtonInterrupt(); // see if button is pressed.
   
-  startWiFi();                 // Start a Wi-Fi access point, and try to connect to some given access points. Then wait for either an AP or STA connection
+  online_mode = startWiFi();
+  if( online_mode ) {          // Start a Wi-Fi access point, and try to connect to some given access points. Then wait for either an AP or STA connection
   
-  startMDNS();                 // Start the mDNS responder
+    startMDNS();                 // Start the mDNS responder
 
-  startServer();               // Start a HTTP server with a file read handler and an upload handler
-
+    startServer();               // Start a HTTP server with a file read handler and an upload handler
+  }
 
 }
 
@@ -165,8 +186,12 @@ void setup() {
 void loop() {
 
   checkButtons();
+  #ifndef ESP32 //not needed on ESP32, ESPmDNS.cpp registers a sys event handler instead
   MDNS.update();
-  server.handleClient();                      // run the http server
+  #endif
+  if( online_mode ) {
+    server.handleClient();                      // run the http server
+  }
   showAnimation();
   
 

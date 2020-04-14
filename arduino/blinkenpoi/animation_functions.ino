@@ -35,14 +35,29 @@ boolean load_animation(int filenum)
     leds_all_off();
     return true;
   }
-  
-  Dir dir = SPIFFS.openDir("/animations/");
+
   int counter=0;
+  #ifdef ESP8266
+  Dir dir = SPIFFS.openDir("/animations/");
     while (dir.next()) {                      // List the file system contents
       counter++;
       String fileName = dir.fileName();
       if(counter==animation_running) return load_animation(fileName.c_str());
     }
+  #endif
+  #ifdef ESP32
+  File dir = SPIFFS.open("/animations");   // don't add a trailing slash!
+  File file = dir.openNextFile();
+    while (file) {                      // List the file system contents
+      counter++;
+      String fileName = file.name();
+      Serial.printf("Checking #%d: %s\n", counter, fileName.c_str());
+      if(counter==animation_running) return load_animation(fileName.c_str());
+      file.close();
+      file = dir.openNextFile();
+    }
+    dir.close();
+  #endif
 }
 
 

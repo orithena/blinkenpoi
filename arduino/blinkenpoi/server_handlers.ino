@@ -127,8 +127,9 @@ void handleFileUpload(){ // upload a new file to the SPIFFS
     fsUploadFile = SPIFFS.open(path, "w");            // Open the file for writing in SPIFFS (create if it doesn't exist)
     path = String();
   } else if(upload.status == UPLOAD_FILE_WRITE){
-    if(fsUploadFile)
+    if(fsUploadFile) {
       fsUploadFile.write(upload.buf, upload.currentSize); // Write the received bytes to the file
+    }
   } else if(upload.status == UPLOAD_FILE_END){
     if(fsUploadFile) {                                    // If the file was successfully created
       fsUploadFile.close();                               // Close the file again
@@ -147,19 +148,32 @@ void handleFileUpload(){ // upload a new file to the SPIFFS
 
 String get_anim_json()
 {
-
+    Serial.println("Anim List requested");
     String anim_list="{ ";
-    
+    #ifdef ESP8266
     Dir dir = SPIFFS.openDir("/animations/");
     while (dir.next()) {                      // List the file system contents
       String fileName = dir.fileName();
       size_t fileSize = dir.fileSize();
-      
+    #endif
+    #ifdef ESP32
+    File dir = SPIFFS.open("/animations");   // don't add a trailing slash!
+    File file = dir.openNextFile();
+    while(file) {
+      String fileName = file.name();
+      size_t fileSize = file.size();
+      file.close();
+      file = dir.openNextFile();
+    #endif  
       anim_list+="\"";    
       anim_list+=fileName.substring(12).c_str();
       anim_list+="\":\""+    String(fileSize) +"\", "; 
     }
+    #ifdef ESP32
+    dir.close();
+    #endif
     anim_list+=" \"EOF\":\"0\" }";
+    Serial.println(anim_list);
     return anim_list;
   
 }

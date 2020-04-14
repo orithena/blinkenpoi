@@ -2,7 +2,7 @@
 
 uint32_t starttime=0;
 
-void startWiFi() { // Start a Wi-Fi access point, and try to connect to some given access points. Then wait for either an AP or STA connection
+bool startWiFi() { // Start a Wi-Fi access point, and try to connect to some given access points. Then wait for either an AP or STA connection
 
 
 
@@ -27,7 +27,12 @@ void startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
          delay(200);
         }
         
+        #ifdef ESP8266
         ESP.reset();
+        #endif
+        #ifdef ESP32
+        ESP.restart();
+        #endif
         delay(5000);
     }
 
@@ -51,7 +56,7 @@ void startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
    if(animation_running)
    {
     Serial.println("Button shortpressed, no network config now.");  
-    return;
+    return false;
    }
   displayLoadingPixel(0,128,128,128); 
 
@@ -63,7 +68,12 @@ void startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
     Serial.println("!!! Failed to open AP\n reset!");
     delay(1000);
     //reset and try again, or maybe put it to deep sleep
+    #ifdef ESP8266
     ESP.reset();
+    #endif
+    #ifdef ESP32
+    ESP.restart();
+    #endif
     delay(5000);
   }
   
@@ -115,6 +125,7 @@ void startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
 
 
   Serial.println("\r\n");
+  return true;
 }
 
 
@@ -181,6 +192,20 @@ void startSPIFFS() { // Start the SPIFFS and list all contents
  
      Serial.println("SPIFFS started. Contents:");
      {
+      #ifdef ESP32
+      File root = SPIFFS.open("/");
+      File file = root.openNextFile();
+      while(file) {
+       String fileName = file.name();
+       size_t fileSize = file.size();
+       Serial.printf("\tFS File: %s, size: %s\r\n", fileName.c_str(), formatBytes(fileSize).c_str());
+       if (fileName.startsWith("/animations/")) total_animations++;
+       file.close();
+       file = root.openNextFile();
+      }
+      root.close();
+      #endif
+      #ifdef ESP8266
       Dir dir = SPIFFS.openDir("/");
       while (dir.next()) 
       {                      // List the file system contents
@@ -189,6 +214,7 @@ void startSPIFFS() { // Start the SPIFFS and list all contents
        Serial.printf("\tFS File: %s, size: %s\r\n", fileName.c_str(), formatBytes(fileSize).c_str());
        if (fileName.startsWith("/animations/")) total_animations++;
       }
+      #endif
       Serial.printf("\n");
      }
     
@@ -241,12 +267,12 @@ void startWebSocket() { // Start a WebSocket server
 
 void startMDNS() { // Start the mDNS responder
   MDNS.begin(mdnsName);                        // start the multicast domain name server
+
   Serial.print("mDNS responder started: http://");
   Serial.print(mdnsName);
   Serial.println(".local");
-
-  MDNS.addService("http", "tcp", 80);
   
+  MDNS.addService("http", "tcp", 80);
 }
 
 void startServer() { // Start a HTTP server with a file read handler and an upload handler
