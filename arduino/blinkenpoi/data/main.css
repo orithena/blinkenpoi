@@ -1,8 +1,6 @@
-body{
-  background: linear-gradient(88deg, #ff0000, #ff9400, #ffee00, #67ff00, #00ffc9, #0098ff, #2800ff, #7600ff, #e700ff, #ff006e, #ff0000);
-}
 @media only screen and (min-width: 1200px) {
 body {
+  background: linear-gradient(88deg, #ff0000, #ff9400, #ffee00, #67ff00, #00ffc9, #0098ff, #2800ff, #7600ff, #e700ff, #ff006e, #ff0000);
   background-size: 2200% 2200%;
  -webkit-animation: BackgroundAnimation 42s ease infinite;
  -moz-animation: BackgroundAnimation 42s ease infinite;
@@ -20,7 +18,7 @@ center {
 }
 
 header {
-    color: white;
+    color: #444;
     padding: 6px;
     font-family: 'Roboto', sans-serif;
     position: relative;
@@ -28,6 +26,11 @@ header {
     justify-content: center;
     align-items: center;
 }
+@media only screen and (min-width: 1200px) {
+header {
+    color: white;
+}}
+
 
 h1 {
     margin: 0px;
@@ -484,7 +487,9 @@ nav .nav-element{
     width: 87px;
     text-align: center;
 }
-#animationlist:before, #animationlist:after {
+
+@media only screen and (min-width: 1200px) {
+   #animationlist:before, #animationlist:after {
 	content: '';
 	position: absolute;
 	left: -2px;
@@ -495,9 +500,6 @@ nav .nav-element{
 	width: calc(100% + 4px);
 	height: calc(100% + 4px);
 	z-index: -1;
-}	
-@media only screen and (min-width: 1200px) {
-    #animationlist:before, #animationlist:after {
 	animation: steam 50s linear infinite;
     }
 }
