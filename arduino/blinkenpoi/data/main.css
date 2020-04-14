@@ -1,10 +1,14 @@
 body{
   background: linear-gradient(88deg, #ff0000, #ff9400, #ffee00, #67ff00, #00ffc9, #0098ff, #2800ff, #7600ff, #e700ff, #ff006e, #ff0000);
+}
+@media only screen and (min-width: 1200px) {
+body {
   background-size: 2200% 2200%;
  -webkit-animation: BackgroundAnimation 42s ease infinite;
  -moz-animation: BackgroundAnimation 42s ease infinite;
  -o-animation: BackgroundAnimation 42s ease infinite;
  animation: BackgroundAnimation 42s ease infinite;
+}
 }
 center {
     width: 800px;
@@ -361,11 +365,14 @@ nav .nav-element{
   -webkit-border-radius: 0 100% 0 0;
   border-radius: 0 100% 0 0;
   opacity: 0;
+}  
+@media only screen and (min-width: 1200px) {
+.wifi-symbol .wifi-circle {
   -o-animation: wifianimation 2s infinite;
   -moz-animation: wifianimation 2s infinite;
   -webkit-animation: wifianimation 2s infinite;
   animation: wifianimation 2s infinite;
-}
+}}
 
 .wifi-symbol .wifi-circle.first {
   -o-animation-delay: 800ms;
@@ -488,7 +495,11 @@ nav .nav-element{
 	width: calc(100% + 4px);
 	height: calc(100% + 4px);
 	z-index: -1;
+}	
+@media only screen and (min-width: 1200px) {
+    #animationlist:before, #animationlist:after {
 	animation: steam 50s linear infinite;
+    }
 }
 #animationlist:after {
 	filter: blur(50px);
@@ -498,6 +509,7 @@ nav .nav-element{
     position: relative;
     z-index: 2;
 }
+
 /* backgroundanimation */
 @-webkit-keyframes BackgroundAnimation {
    0%{background-position:19% 0%}
@@ -567,6 +579,7 @@ nav .nav-element{
     opactiy: 0.1;
   }
 }
+
 /* title animation */
 .circle {
   height: 100px;
@@ -577,8 +590,11 @@ nav .nav-element{
 
 .circle:nth-of-type(2) {
   box-shadow: 0 1px 0 0 rgba(225, 131, 194, 0.25), 0 -1px 0 0 rgba(165, 181, 222, 0.25), 1px 0 0 0 rgba(225, 131, 194, 0.25), -1px 0 0 0 rgba(165, 181, 222, 0.25), 1px -1px 0 0 rgba(195, 156, 208, 0.5), -1px 1px 0 0 rgba(195, 156, 208, 0.5), 1px 1px 0 0 rgba(255, 105, 180, 0.75), -1px -1px 0 0 rgba(135, 206, 235, 0.75);
+}	
+@media only screen and (min-width: 1200px) {
+.circle:nth-of-type(2) {
   animation: rotateThis 1s linear infinite;
-}
+}}
 .circle:nth-of-type(3) {
   box-shadow: 0 1px 0 0 rgba(192, 63, 153, 0.25), 0 -1px 0 0 rgba(214, 69, 99, 0.25), 1px 0 0 0 rgba(192, 63, 153, 0.25), -1px 0 0 0 rgba(214, 69, 99, 0.25), 1px -1px 0 0 rgba(203, 66, 126, 0.5), -1px 1px 0 0 rgba(203, 66, 126, 0.5), 1px 1px 0 0 rgba(181, 59, 180, 0.75), -1px -1px 0 0 rgba(225, 72, 71, 0.75);
 }
@@ -594,6 +610,7 @@ nav .nav-element{
   left: 0px;
   margin: auto;
 }
+@media only screen and (min-width: 1200px) {
 .circle-multiple .circle:nth-of-type(1) {
   animation: psycho 2s linear infinite;
 }
@@ -602,7 +619,7 @@ nav .nav-element{
 }
 .circle-multiple .circle:nth-of-type(3) {
   animation: psycho 2s linear .25s infinite;
-}
+}}
 @keyframes psycho {
   0% {
     transform: rotate(0deg) scale(1) translate(0, 0);
