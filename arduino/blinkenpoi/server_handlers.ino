@@ -14,7 +14,6 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
    Serial.print("Trying to load animation: "); 
    Serial.println(load_anim); 
 
-
    // whatever happens later 200 or 404.. we want to let the client know CORS
    server.sendHeader("Access-Control-Allow-Origin","*");
            
@@ -26,12 +25,10 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
    }
    else
    {
-    
      // results in 404 ..
      return false;
    }    
   }
-
 
   // remove animation from spiffs
   if (path.startsWith("/delete/"))
@@ -52,7 +49,6 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
     return false;
   }
 
-
   // receive list of animations
   if (path.startsWith("/get_animations"))
   {
@@ -62,30 +58,18 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
      server.send(200, "application/javascript", anim_list);
 
      return true;
-  
   }
-
-
-
-
-
 
   // receive information about poi
   if (path.startsWith("/get_info"))
   {
-    String info_str="{ \"version\":"+ (String) SW_VERSION +", \"name\":\""+ (String) custom_stick_name_str +"\", \"ip\":\""+WiFi.localIP().toString()+"\",\"animations\": "+get_anim_json()+" }";
+     String info_str="{ \"version\":"+ (String) SW_VERSION +", \"name\":\""+ (String) custom_stick_name_str +"\", \"ip\":\""+WiFi.localIP().toString()+"\",\"animations\": "+get_anim_json()+" }";
 
      server.sendHeader("Access-Control-Allow-Origin","*");
      server.send(200, "application/javascript", info_str);
 
      return true;
-  
   }
-
-
-
-
-
   
   if (path.endsWith("/")) path += "index.html";          // If a folder is requested, send the index file
   String contentType = getContentType(path);             // Get the MIME type
@@ -108,12 +92,8 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
 void handleFileUpload(){ // upload a new file to the SPIFFS
   HTTPUpload& upload = server.upload();
   
-
-
-  
   String path;
   if(upload.status == UPLOAD_FILE_START){
-
 
    server.sendHeader("Access-Control-Allow-Origin","*");
 
@@ -143,13 +123,17 @@ void handleFileUpload(){ // upload a new file to the SPIFFS
 }
 
 
-
-
-
 String get_anim_json()
 {
     Serial.println("Anim List requested");
     String anim_list="{ ";
+    // first, the generative functions:
+    for( int a = 0; a < ARRAY_SIZE(animations); a++ ) {
+      anim_list+="\"";    
+      anim_list+=animations[a].name.c_str();
+      anim_list+="\":\"0\", "; 
+    }
+    // then the files:
     #ifdef ESP8266
     Dir dir = SPIFFS.openDir("/animations/");
     while (dir.next()) {                      // List the file system contents
@@ -174,6 +158,5 @@ String get_anim_json()
     #endif
     anim_list+=" \"EOF\":\"0\" }";
     Serial.println(anim_list);
-    return anim_list;
-  
+    return anim_list;  
 }

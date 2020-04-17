@@ -53,7 +53,7 @@ bool startWiFi() { // Start a Wi-Fi access point, and try to connect to some giv
 
 
 
-   if(animation_running)
+   if(state.running)
    {
     Serial.println("Button shortpressed, no network config now.");  
     return false;
@@ -335,7 +335,7 @@ boolean checkforButtonInterrupt()
   while(true)
   {
    button2.tick();
-   if(animation_running || reset_config) 
+   if(state.running || reset_config) 
    { 
     Serial.println("time for a break.");
     return false;

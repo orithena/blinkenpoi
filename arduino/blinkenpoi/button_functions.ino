@@ -16,9 +16,9 @@ boolean checkButtons()
 //TODO set flag and handle content elsewhere
 void click2() {
   Serial.println("Button 2 click.");
-  animation_running++;
-  if(animation_running>total_animations) animation_running=0;
-  load_animation(animation_running);
+  state.running++;
+  if(state.running>total_animations) state.running=0;
+  load_animation(state.running);
 } 
 
 
@@ -26,4 +26,4 @@ void click2() {
 void longpress2() {
   Serial.println("Button 2 longpress.");
   reset_config = true;
-} 
+}

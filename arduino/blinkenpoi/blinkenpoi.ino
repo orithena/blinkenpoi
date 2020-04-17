@@ -27,7 +27,7 @@
 #include <SPI.h>         
 
 #include "OneButton.h"
-
+#include "lib8tion.h"
 
 
 
@@ -138,10 +138,43 @@ const char* mdnsName = "blinkenpoi"; // Domain name for the mDNS responder
 OneButton button2(button2_pin, true);
 //OneButton button1(button1_pin, false);
 
+typedef struct Pixel {
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+} Pixel;
 
+struct AnimationState;
+typedef int (*animationfunction)(struct AnimationState*);
+typedef struct AnimationState {
+  uint32_t frame;               // Counts the frame number. One frame is the state of all LEDs for roughly 4 milliseconds, which _very_ roughly amounts to a "square" pixel.
+                                // Even if the animation function is called more often, the frame counter is increasing every 4ms.
+  File file;                    // the file to read from if loaded == 1
+  int loaded;                   // 0: nothing is loaded. 1: a file is loaded. 2: a generative animation is selected, no need to load anything
+  int running;                  // internal index number of animation
+  animationfunction callback;   // reference to the actual animation function, which fills one row with data
+  struct Pixel pixels[25];      // array of RGB pixel data, to be filled by callback().
+} AnimationState;
+
+AnimationState state = {
+  frame: 0,
+  file: File(),
+  loaded: 0, 
+  running: 0,
+  callback: NULL,
+  pixels: {}
+};
+
+typedef struct AnimationInfo {
+  String name;
+  animationfunction func;
+} AnimationInfo;
+
+#include "generative_animations.h"
 
 /// global vars, no touchy
-int animation_running=0;
+/// but I did touch them...
+//int animation_running=0;
 int total_animations=0;
 bool online_mode=true;
 
@@ -177,14 +210,10 @@ void setup() {
 
     startServer();               // Start a HTTP server with a file read handler and an upload handler
   }
-
 }
 
 
-
-
 void loop() {
-
   checkButtons();
   #ifndef ESP32 //not needed on ESP32, ESPmDNS.cpp registers a sys event handler instead
   MDNS.update();
@@ -193,6 +222,4 @@ void loop() {
     server.handleClient();                      // run the http server
   }
   showAnimation();
-  
-
 }
