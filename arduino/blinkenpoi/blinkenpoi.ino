@@ -87,10 +87,14 @@
 
 // These are the internal pin numbers used to drive the leds.
 // if C and D are swapped on your ledstrip just swap these two numbers
+#ifdef ESP32
 #define DATAPIN    23
 #define CLOCKPIN   18
-
-
+#endif
+#ifdef ESP8266
+#define DATAPIN    14
+#define CLOCKPIN   13
+#endif
 
 
 // button1 is borken because the wemos D1 has a strong pulldown resistor that can not be overridden with internal_pullup on D8 / GPIO15
@@ -99,8 +103,12 @@
 // kann man so machen ist dann halt scheisse.
 
 // valid pinout for PCB rev. 3.0
-const int button2_pin=16; // D4
-
+#ifdef ESP32
+const int button2_pin=16;
+#endif
+#ifdef ESP8266
+const int button2_pin=2; // D4
+#endif
 // valid pinout for PCB rev. 1.0
 //const int button1_pin=12; // D6
 
