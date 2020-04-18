@@ -6,8 +6,10 @@ Adafruit_DotStar strip(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 int animate_from_file(struct AnimationState *state) {
-  for(int i = 0; i < 25; i++ ) {
-    state->pixels[i] = { r: getByte(), g: getByte(), b: getByte() };
+  EVERY_N_MILLISECONDS(3) {
+    for(int i = 0; i < 25; i++ ) {
+      state->pixels[i] = { r: getByte(), g: getByte(), b: getByte() };
+    }
   }
   return 0;
 }
@@ -15,7 +17,7 @@ int animate_from_file(struct AnimationState *state) {
 boolean load_animation(String filename)
 {
   for( int a = 0; a < ARRAY_SIZE(animations); a++ ) {
-    if( filename.substring(12).equals(animations[a].name) ) {
+    if( filename.equals(animations[a].name) || filename.substring(12).equals(animations[a].name) ) {
       state.callback = animations[a].func;
       state.loaded = 2;
       Serial.print("Loaded generative function ");
@@ -101,7 +103,7 @@ uint8_t getByte()
 void showAnimation()
 {
   if(state.loaded == 0) return;
-  EVERY_N_MILLISECONDS(4) {
+  EVERY_N_MILLISECONDS(3) {
     // increase frame counter. 
     state.frame += 1;
   }
