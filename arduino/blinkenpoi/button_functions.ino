@@ -16,8 +16,7 @@ boolean checkButtons()
 //TODO set flag and handle content elsewhere
 void click2() {
   Serial.println("Button 2 click.");
-  state.running++;
-  if(state.running>total_animations) state.running=0;
+  state.running = (state.running + 1) % total_animations;
   load_animation(state.running);
 } 
 
@@ -25,5 +24,9 @@ void click2() {
 //TODO set flag and handle content elsewhere 
 void longpress2() {
   Serial.println("Button 2 longpress.");
-  reset_config = true;
+  if(!looping) {
+    reset_config = true;
+  } else {
+    autoanimation = true;
+  }
 }

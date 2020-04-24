@@ -4,7 +4,7 @@
 // The most simple function that qualifies as an animation function looks like this:
 //   int dummy_animation(struct AnimationState *state) {
 //     for( int a = 0; a < 25; a++ ) {
-//       state->pixels[a] = { r: a*10, g: 0, b: a*10 };
+//       state->pixels[a] = RGB(a*10, 0, a*10);
 //     }
 //   }
 //
@@ -22,7 +22,7 @@
 
 int dummy_animation(struct AnimationState *state) {
   for( int a = 0; a < 25; a++ ) {
-    state->pixels[a] = { r: a*10, g: 0, b: a*10 };
+    state->pixels[a] = RGB(a*10, 0, a*10);
   }
   return 0;
 }

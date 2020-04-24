@@ -70,9 +70,11 @@
  *  If you press the button during the pink phase and keep it pressed or ~1.5 seconds you activate a configuration RESET.
  *  The first led will blink red 3 times and the saved wifi information is deleted and an access point is opened for configuration.
  *  
- *  Once the stick operates it waits for a trigger on the weninterface.
+ *  Once the stick operates it waits for a trigger on the webinterface.
  *  Animation playback is triggered by an HTTP request.
  *  for example: http://10.0.0.42/run/rgb1.tek 
+ *  Alternatively you may press Button 2 shortly to select the next animation,
+ *  long press to activate automatic playback.
  * 
  *  Of course you can override the animation playback with the button at any time.
  * 
@@ -185,6 +187,8 @@ typedef struct AnimationInfo {
 //int animation_running=0;
 int total_animations=0;
 bool online_mode=true;
+bool looping = false; // a.k.a. "wifi setup is done", used by button functions
+bool autoanimation = false;
 
 // set true if button is pressed during pink phase
 boolean reset_config = false;
@@ -222,7 +226,14 @@ void setup() {
 
 
 void loop() {
+  looping = true;
   checkButtons();
+  EVERY_N_SECONDS(20) {
+    if( autoanimation ) {
+        state.running = (state.running + 1) % total_animations;
+        load_animation(state.running);
+    }
+  }
   #ifndef ESP32 //not needed on ESP32, ESPmDNS.cpp registers a sys event handler instead
   MDNS.update();
   #endif

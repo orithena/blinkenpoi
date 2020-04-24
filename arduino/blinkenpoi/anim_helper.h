@@ -5,6 +5,12 @@ void Clear(struct AnimationState *state) {
   }
 }
 
+Pixel RGB(uint8_t r, uint8_t g, uint8_t b)
+{
+  Pixel rgb = { r: r, g: g, b: b };
+  return rgb;
+}
+
 Pixel HSV(uint8_t h, uint8_t s, uint8_t v)
 {
     Pixel rgb;
